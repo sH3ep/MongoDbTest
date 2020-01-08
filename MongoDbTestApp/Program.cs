@@ -12,8 +12,8 @@ namespace MongoDbTestApp
         {
             var app = new AppRun();
 
-            Task.Run(async () =>await app.Run()).GetAwaiter().GetResult();
-           
+            app.Run().Wait();
+
         }
     }
 }

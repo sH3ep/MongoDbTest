@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using LinqKit;
 using MongoDB.Driver;
 
 namespace MongoDbTestApp
@@ -33,6 +36,17 @@ namespace MongoDbTestApp
             return collection.Find(x=>x.Type == typeof(T).Name).ToList();
         }
 
+        public async Task<List<T>> GetCollection(Expression<Func<T,bool>> expression)
+        {
+            var searchCriteria =  PredicateBuilder.New<T>(true);
+            searchCriteria.And(expression);
+            searchCriteria.And(x => x.Type == typeof(T).Name);
+
+            var collectionName = GetCollectionName();
+            var collection = Database.GetCollection<T>(collectionName);
+            
+            return collection.Find(searchCriteria).ToList();
+        }
 
         private static string GetCollectionName()
         {
